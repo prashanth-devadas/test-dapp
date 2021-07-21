@@ -7,10 +7,10 @@ import Greeter from './artifacts/contracts/Greeter.sol/Greeter.json';
 const greeterAddress = "0x5fbdb2315678afecb367f032d93f642f64180aa3"
 
 function App() {
-  const [greeting, setGreeting] = useState();
+  const [greeting, setGreeting] = useState('');
 
   async function requestAccount(){
-    await window.ethereum.requestAccount({ method: 'eth_requestAccounts'});
+    await window.ethereum.request({ method: 'eth_requestAccounts'});
   }
 
   async function fetchGreeting(){
@@ -32,9 +32,10 @@ function App() {
     if(typeof window.ethereum !== 'undefined'){
       await requestAccount();
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = new provider.getSigner();
-      const contract = new ethers.contract(greeterAddress, Greeter.abi, signer);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(greeterAddress, Greeter.abi, signer);
       const transaction = await contract.setGreeting(greeting)
+      setGreeting('');
       await transaction.wait();
       fetchGreeting();
     }
@@ -43,18 +44,11 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <button onClick={fetchGreeting}>Greetings!!</button>
+        <button onClick={setGreetingValue}>Set New Greeting</button>
+        <input type="text" onChange={e => setGreeting(e.target.value)}
+        placeholder="New Greeting text"
+        value={greeting}/>
       </header>
     </div>
   );
