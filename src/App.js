@@ -41,9 +41,16 @@ function App() {
     }
   }
 
+  async function connectWallet(){
+    if(typeof window.ethereum !== 'undefined'){
+      await requestAccount();
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header">
+        <button onClick={connectWallet}>Connect Wallet</button>
         <button onClick={fetchGreeting}>Greetings!!</button>
         <button onClick={setGreetingValue}>Set New Greeting</button>
         <input type="text" onChange={e => setGreeting(e.target.value)}
